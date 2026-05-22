@@ -3,7 +3,7 @@
 ../Core/Src/main.c:271:13:MX_ADC1_Init	3
 ../Core/Src/main.c:323:13:MX_I2C2_Init	4
 ../Core/Src/main.c:371:13:MX_I2C4_Init	4
-../Core/Src/main.c:419:13:MX_SPI1_Init	2
+../Core/Src/main.c:419:13:MX_SPI1_Init	1
 ../Core/Src/main.c:459:13:MX_SPI2_Init	2
 ../Core/Src/main.c:499:13:MX_TIM1_Init	4
 ../Core/Src/main.c:546:13:MX_UART5_Init	2

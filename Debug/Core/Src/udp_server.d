@@ -77,7 +77,10 @@ Core/Src/udp_server.o: ../Core/Src/udp_server.c ../Core/Inc/udp_server.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h \
- ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h \
+ ../Core/Inc/test_uart.h ../Core/Inc/test_spi.h ../Core/Inc/test_i2c.h \
+ ../Core/Inc/test_timer.h ../Core/Inc/test_adc.h
 ../Core/Inc/udp_server.h:
 ../Middlewares/Third_Party/LwIP/src/include/lwip/udp.h:
 ../Middlewares/Third_Party/LwIP/src/include/lwip/opt.h:
@@ -159,3 +162,9 @@ Core/Src/udp_server.o: ../Core/Src/udp_server.c ../Core/Inc/udp_server.h \
 ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h:
+../Core/Inc/test_uart.h:
+../Core/Inc/test_spi.h:
+../Core/Inc/test_i2c.h:
+../Core/Inc/test_timer.h:
+../Core/Inc/test_adc.h:

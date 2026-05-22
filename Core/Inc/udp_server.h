@@ -1,6 +1,9 @@
 #ifndef UDP_SERVER_H
 #define UDP_SERVER_H
 
+
+
+
 #include "lwip/udp.h"
 #include <stdint.h>
 
@@ -28,6 +31,31 @@ typedef struct __attribute__((packed))
 } ack_to_client_t;
 
 
+
+
+
+typedef struct __attribute__((packed))
+{
+    uint16_t test_id;
+    uint8_t peripheral;
+    uint8_t status;
+    /*
+        0 = FAIL
+        1 = PASS
+    */
+
+} test_result_t;
+
+
+typedef enum
+{
+    PERIPH_TIMER = 1,
+    PERIPH_UART  = 2,
+    PERIPH_SPI   = 3,
+    PERIPH_I2C   = 4,
+    PERIPH_ADC   = 5
+
+} peripheral_id_t;
 void UDP_Server_Init(void);
 void UDP_Server_Task(void);
 void UDP_Send_Ack(cmd_to_stm_t *cmd);

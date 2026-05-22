@@ -1,0 +1,2 @@
+../Core/Src/test_uart.c:13:7:init_uart_task	3
+../Core/Src/test_uart.c:37:6:xUart_task	1

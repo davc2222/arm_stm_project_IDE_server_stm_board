@@ -5,7 +5,12 @@
 #include <stdio.h>
 #include "FreeRTOS.h"
 #include "semphr.h"
-
+#include <queue.h>
+#include "test_uart.h"
+#include "test_spi.h"
+#include "test_i2c.h"
+#include "test_timer.h"
+#include "test_adc.h"
 
 SemaphoreHandle_t udp_tx_mutex;
 
@@ -134,3 +139,35 @@ void UDP_Server_Task(void)
 
     pbuf_free(p);
 }
+
+
+ void Dispatch_Peripheral_Command(cmd_to_stm_t *cmd)
+ {
+     switch (cmd->tested_Peripheral)
+     {
+
+         case PERIPH_TIMER:
+               xQueueSend(xQueue_tmr, cmd, 0);
+               break;
+
+         case PERIPH_UART:
+             xQueueSend(xQueue_uart, cmd, 0);
+             break;
+
+         case PERIPH_SPI:
+             xQueueSend(xQueue_spi, cmd, 0);
+             break;
+
+         case PERIPH_I2C:
+             xQueueSend( xQueue_i2c, cmd, 0);
+             break;
+
+         case PERIPH_ADC:
+             xQueueSend(xQueue_adc, cmd, 0);
+             break;
+
+         default:
+             printf("Unknown peripheral\r\n");
+             break;
+     }
+ }

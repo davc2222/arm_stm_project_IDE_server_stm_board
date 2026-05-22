@@ -1,0 +1,2 @@
+../Core/Src/test_adc.c:15:7:init_adc_task	16	static
+../Core/Src/test_adc.c:39:6:xAdc_task	32	static

@@ -1,0 +1,2 @@
+../Core/Src/test_spi.c:14:7:init_spi_task	3
+../Core/Src/test_spi.c:38:6:xSpi_task	1

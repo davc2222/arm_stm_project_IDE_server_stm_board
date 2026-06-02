@@ -20,11 +20,13 @@
 #include "main.h"
 #include "cmsis_os.h"
 #include "lwip.h"
-#include "lwip/netif.h"
-#include "lwip/ip_addr.h"
 
-
-
+#include "test_uart.h"
+#include "test_spi.h"
+#include "test_i2c.h"
+#include "test_timer.h"
+#include "test_adc.h"
+#include "test_results.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "udp_server.h"
@@ -36,7 +38,12 @@ extern SemaphoreHandle_t udp_tx_mutex;
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+extern QueueHandle_t   xQueue_adc;
+extern QueueHandle_t   xQueue_uart;
+extern QueueHandle_t   xQueue_spi;
+extern QueueHandle_t   xQueue_i2c;
+extern QueueHandle_t   xQueue_tmr;
+extern  volatile uint8_t udp_packet_ready ;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -71,7 +78,6 @@ UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 DMA_HandleTypeDef hdma_uart5_rx;
 DMA_HandleTypeDef hdma_usart2_tx;
-DMA_HandleTypeDef hdma_usart2_rx;
 
 PCD_HandleTypeDef hpcd_USB_OTG_FS;
 
@@ -151,12 +157,23 @@ int main(void)
   MX_I2C4_Init();
   MX_I2C2_Init();
   MX_USART3_UART_Init();
-  /* USER CODE BEGIN 2 */
-//  MX_LWIP_Init();
-  /* USER CODE END 2 */
+
 
   /* Init scheduler */
+
   osKernelInitialize();
+
+  /* USER CODE BEGIN 2 */
+
+   init_adc_task();
+   init_i2c_task();
+  // init_spi_task();
+   init_tmr_task();
+   init_uart_task();
+   init_result();
+   /* USER CODE END 2 */
+
+
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
@@ -176,19 +193,7 @@ int main(void)
 
   /* Create the thread(s) */
   /* creation of defaultTask */
-//   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
-  /* USER CODE BEGIN 1 */
-  xTaskCreate(StartDefaultTask,
-              "DefaultTask",
-              1024,
-              NULL,
-              5,
-              NULL);
-
-  udp_tx_mutex = xSemaphoreCreateMutex();
-
-  /* USER CODE END 1  */
-
+  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -441,7 +446,7 @@ static void MX_SPI1_Init(void)
   hspi1.Init.CRCPolynomial = 7;
   hspi1.Init.CRCLength = SPI_CRC_LENGTH_DATASIZE;
   hspi1.Init.NSSPMode = SPI_NSS_PULSE_ENABLE;
-  if (HAL_SPI_Init(&hspi1) != HAL_OK)/* USER CODE BEGIN 2 */SPI_CRCCALCULATION_DISABLE;
+  if (HAL_SPI_Init(&hspi1) != HAL_OK)
   {
     Error_Handler();
   }
@@ -701,9 +706,6 @@ static void MX_DMA_Init(void)
   /* DMA1_Stream4_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Stream4_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream4_IRQn);
-  /* DMA1_Stream5_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Stream5_IRQn, 5, 0);
-  HAL_NVIC_EnableIRQ(DMA1_Stream5_IRQn);
   /* DMA1_Stream6_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Stream6_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream6_IRQn);
@@ -795,33 +797,24 @@ static void MX_GPIO_Init(void)
   * @param  argument: Not used
   * @retval None
   */
- /* USER CODE BEGIN 2 */
+/* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void *argument)
 {
-	 MX_LWIP_Init();
+  /* init code for LWIP */
+  MX_LWIP_Init();
+  /* USER CODE BEGIN 5 */
+  UDP_Server_Init();
+  /* Infinite loop */
+  for(;;)
+  {
 
-	    UDP_Server_Init();
 
-	    for (;;)
+	         UDP_Server_Task();
 
-{
-	        UDP_Server_Task();
-
-	        osDelay(10);
-	    }
+  osDelay(100);
   }
-
-
-  /* USER CODE END 2 */
-
-/**
-  * @brief  Period elapsed callback in non blocking mode
-  * @note   This function is called  when TIM6 interrupt took place, inside
-  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
-  * a global variable "uwTick" used as application time base.
-  * @param  htim : TIM handle
-  * @retval None
-  */
+  /* USER CODE END 5 */
+}
 
 
 /* USER CODE BEGIN 3 */
@@ -837,7 +830,14 @@ int _write(int file, char *ptr, int len)
     return len;
 }
 /* USER CODE END  3 */
-
+/**
+  * @brief  Period elapsed callback in non blocking mode
+  * @note   This function is called  when TIM6 interrupt took place, inside
+  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+  * a global variable "uwTick" used as application time base.
+  * @param  htim : TIM handle
+  * @retval None
+  */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   /* USER CODE BEGIN Callback 0 */

@@ -1,0 +1,3 @@
+../Core/Src/test_results.c:23:6:init_result	16	static
+../Core/Src/test_results.c:45:6:xTask_results	24	static
+../Core/Src/test_results.c:88:9:compute_crc8	32	static

@@ -1,2 +1,2 @@
-../Core/Src/test_adc.c:15:7:init_adc_task	3
-../Core/Src/test_adc.c:39:6:xAdc_task	1
+../Core/Src/test_adc.c:16:7:init_adc_task	3
+../Core/Src/test_adc.c:40:6:xAdc_task	1

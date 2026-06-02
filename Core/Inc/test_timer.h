@@ -14,7 +14,7 @@
 
 void xTmr_task(void *argument);
 
-extern QueueHandle_t   xQueue_tmr;
-
+//extern QueueHandle_t   xQueue_tmr;
+void init_tmr_task(void);
 
 #endif /* INC_TEST_TIMER_H_ */

@@ -16,7 +16,7 @@
 
 void xI2c_task(void *argument);
 
-extern QueueHandle_t   xQueue_i2c;
-
+//extern QueueHandle_t   xQueue_i2c;
+void init_i2c_task(void);
 
 #endif /* INC_TEST_I2C_H_ */

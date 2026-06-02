@@ -8,8 +8,8 @@
 #include "udp_server.h"
 #include "test_spi.h"
 
-
 QueueHandle_t   xQueue_spi;
+
 
  void init_spi_task(void){
 
@@ -37,6 +37,8 @@ QueueHandle_t   xQueue_spi;
 
 void xSpi_task(void *argument)
 {
+
+
     cmd_to_stm_t cmd;
 
 

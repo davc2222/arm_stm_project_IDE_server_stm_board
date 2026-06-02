@@ -10,6 +10,7 @@
 #include "test_i2c.h"
 #include "test_timer.h"
 #include "test_adc.h"
+
 QueueHandle_t   xQueue_adc;
 
  void init_adc_task(void){
@@ -38,7 +39,10 @@ QueueHandle_t   xQueue_adc;
 
 void xAdc_task(void *argument)
 {
-    cmd_to_stm_t cmd;
+
+
+
+       cmd_to_stm_t cmd;
 
 
 

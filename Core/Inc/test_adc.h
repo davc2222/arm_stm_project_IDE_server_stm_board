@@ -14,8 +14,8 @@
 
 void xAdc_task(void *argument);
 
-extern QueueHandle_t   xQueue_adc;
-
+//extern QueueHandle_t   xQueue_adc;
+void init_adc_task(void);
 
 
 #endif /* INC_TEST_ADC_H_ */

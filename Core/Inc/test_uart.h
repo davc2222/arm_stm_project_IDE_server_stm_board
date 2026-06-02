@@ -11,11 +11,11 @@
 
 #define   UART_QUEUE_LENGTH  50
 #define   UART_QUEUE_SIZE      sizeof(cmd_to_stm_t)
-#define   TASK_UART_PRI           5
+#define   TASK_UART_PRI          30
 
-
+void init_uart_task(void);
 void xUart_task(void *argument);
 
-extern QueueHandle_t   xQueue_uart;
+//extern QueueHandle_t   xQueue_uart;
 
 #endif /* INC_TEST_UART_H_ */

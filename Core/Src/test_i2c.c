@@ -37,6 +37,7 @@ QueueHandle_t   xQueue_i2c;
 
 void xI2c_task(void *argument)
 {
+
     cmd_to_stm_t cmd;
 
 

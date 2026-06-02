@@ -83,7 +83,9 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Middlewares/Third_Party/LwIP/system/arch/sys_arch.h \
  ../LWIP/Target/ethernetif.h \
  ../Middlewares/Third_Party/LwIP/src/include/lwip/tcpip.h \
- ../Core/Inc/udp_server.h \
+ ../Core/Inc/test_uart.h ../Core/Inc/test_spi.h ../Core/Inc/test_i2c.h \
+ ../Core/Inc/test_timer.h ../Core/Inc/test_adc.h \
+ ../Core/Inc/test_results.h ../Core/Inc/udp_server.h \
  ../Middlewares/Third_Party/LwIP/src/include/lwip/udp.h \
  ../Middlewares/Third_Party/LwIP/src/include/lwip/ip.h \
  ../Middlewares/Third_Party/LwIP/src/include/lwip/ip6.h \
@@ -177,6 +179,12 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Middlewares/Third_Party/LwIP/system/arch/sys_arch.h:
 ../LWIP/Target/ethernetif.h:
 ../Middlewares/Third_Party/LwIP/src/include/lwip/tcpip.h:
+../Core/Inc/test_uart.h:
+../Core/Inc/test_spi.h:
+../Core/Inc/test_i2c.h:
+../Core/Inc/test_timer.h:
+../Core/Inc/test_adc.h:
+../Core/Inc/test_results.h:
 ../Core/Inc/udp_server.h:
 ../Middlewares/Third_Party/LwIP/src/include/lwip/udp.h:
 ../Middlewares/Third_Party/LwIP/src/include/lwip/ip.h:

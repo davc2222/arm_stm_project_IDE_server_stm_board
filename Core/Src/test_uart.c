@@ -16,29 +16,38 @@ extern QueueHandle_t xQueue_results;
 
 QueueHandle_t   xQueue_uart;
 
- void init_uart_task(void){
+void init_uart_task(void)
+{
+    xQueue_uart = xQueueCreate(UART_QUEUE_LENGTH, UART_QUEUE_SIZE);
 
-	 // Create uart task
+    if (xQueue_uart == NULL)
+    {
+        my_assert(false, "failed to create uart queue");
+    }
 
-	     if (xTaskCreate(xUart_task, "Task UART", configMINIMAL_STACK_SIZE, NULL, TASK_UART_PRI, NULL) != pdPASS)
-	     {
-	         my_assert(false, "failed to create Task UART");
-	     }
+    uart2_tx_done_sem = xSemaphoreCreateBinary();
+    uart5_rx_done_sem = xSemaphoreCreateBinary();
 
+    if (uart2_tx_done_sem == NULL)
+    {
+        my_assert(false, "failed to create uart2_tx_done_sem");
+    }
 
+    if (uart5_rx_done_sem == NULL)
+    {
+        my_assert(false, "failed to create uart5_rx_done_sem");
+    }
 
-	     // create  uart queue
-
-	        xQueue_uart = xQueueCreate(UART_QUEUE_LENGTH, UART_QUEUE_SIZE);
-
-	        if (xQueue_uart == NULL)
-	        {
-
-	            my_assert(false, "failed to create uart queue");
-	        }
-
- }
-
+    if (xTaskCreate(xUart_task,
+                    "Task UART",
+                    configMINIMAL_STACK_SIZE,
+                    NULL,
+                    TASK_UART_PRI,
+                    NULL) != pdPASS)
+    {
+        my_assert(false, "failed to create Task UART");
+    }
+}
  /*****************************************************************************************************/
 
 void xUart_task(void *argument)
@@ -52,8 +61,8 @@ void xUart_task(void *argument)
 	    for (;;)
 	    {
 
-	    	  printf("task uart running.....\r\n");
-	        if (xQueueReceive(xQueue_uart, &cmd, portMAX_DELAY) == pdPASS)
+	    	 // printf("task uart running.....\r\n");
+	        if (xQueueReceive(xQueue_uart, &cmd, 100) == pdPASS)
 	        {
 	            memset(&result, 0, sizeof(result));
 	            memset(uart5_rx_buf, 0, sizeof(uart5_rx_buf));
@@ -65,7 +74,14 @@ void xUart_task(void *argument)
 	            if (cmd.bit_pattern_length == 0 ||
 	                cmd.bit_pattern_length > BIT_PATTERN_LENGTH)
 	            {
-	                xQueueSend(xQueue_results, &result, 0);
+	            	printf("UART: send result id=%u status=%u\r\n",
+	            	       result.test_id,
+	            	       result.status);
+
+	            	if (xQueueSend(xQueue_results, &result, 0) != pdTRUE)
+	            	{
+	            	    printf("UART: xQueueSend result FAILED\r\n");
+	            	}
 	                continue;
 	            }
 
@@ -73,7 +89,14 @@ void xUart_task(void *argument)
 	                                     uart5_rx_buf,
 	                                     cmd.bit_pattern_length) != HAL_OK)
 	            {
-	                xQueueSend(xQueue_results, &result, 0);
+	            	printf("UART: send result id=%u status=%u\r\n",
+	            	       result.test_id,
+	            	       result.status);
+
+	            	if (xQueueSend(xQueue_results, &result, 0) != pdTRUE)
+	            	{
+	            	    printf("UART: xQueueSend result FAILED\r\n");
+	            	}
 	                continue;
 	            }
 
@@ -82,7 +105,14 @@ void xUart_task(void *argument)
 	                                      cmd.bit_pattern_length) != HAL_OK)
 	            {
 	                HAL_UART_AbortReceive(&huart5);
-	                xQueueSend(xQueue_results, &result, 0);
+	                printf("UART: send result id=%u status=%u\r\n",
+	                       result.test_id,
+	                       result.status);
+
+	                if (xQueueSend(xQueue_results, &result, 0) != pdTRUE)
+	                {
+	                    printf("UART: xQueueSend result FAILED\r\n");
+	                }
 	                continue;
 	            }
 
@@ -91,7 +121,14 @@ void xUart_task(void *argument)
 	            {
 	                HAL_UART_AbortTransmit(&huart2);
 	                HAL_UART_AbortReceive(&huart5);
-	                xQueueSend(xQueue_results, &result, 0);
+	                printf("UART: send result id=%u status=%u\r\n",
+	                       result.test_id,
+	                       result.status);
+
+	                if (xQueueSend(xQueue_results, &result, 0) != pdTRUE)
+	                {
+	                    printf("UART: xQueueSend result FAILED\r\n");
+	                }
 	                continue;
 	            }
 
@@ -110,7 +147,14 @@ void xUart_task(void *argument)
 	                result.status = TEST_PASS;
 	            }
 
-	            xQueueSend(xQueue_results, &result, 0);
+	            printf("UART: send result id=%u status=%u\r\n",
+	                   result.test_id,
+	                   result.status);
+
+	            if (xQueueSend(xQueue_results, &result, 0) != pdTRUE)
+	            {
+	                printf("UART: xQueueSend result FAILED\r\n");
+	            }
 	        }
 	    }
 }
@@ -119,22 +163,23 @@ void xUart_task(void *argument)
 
 
 
-/*************************************************************************/
-
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 
     if (huart->Instance == USART2)
     {
-        xSemaphoreGiveFromISR(uart2_tx_done_sem,
-                              &xHigherPriorityTaskWoken);
+        printf("TX CALLBACK\r\n");
 
-        portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+        if (uart2_tx_done_sem != NULL)
+        {
+            xSemaphoreGiveFromISR(uart2_tx_done_sem,
+                                  &xHigherPriorityTaskWoken);
+
+            portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+        }
     }
 }
-
-/*************************************************************************/
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
@@ -142,9 +187,14 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
     if (huart->Instance == UART5)
     {
-        xSemaphoreGiveFromISR(uart5_rx_done_sem,
-                              &xHigherPriorityTaskWoken);
+        printf("RX CALLBACK\r\n");
 
-        portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+        if (uart5_rx_done_sem != NULL)
+        {
+            xSemaphoreGiveFromISR(uart5_rx_done_sem,
+                                  &xHigherPriorityTaskWoken);
+
+            portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+        }
     }
 }

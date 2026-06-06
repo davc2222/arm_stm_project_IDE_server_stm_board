@@ -1,4 +1,4 @@
-../Core/Src/test_uart.c:19:7:init_uart_task	16	static
-../Core/Src/test_uart.c:44:6:xUart_task	48	static
-../Core/Src/test_uart.c:124:6:HAL_UART_TxCpltCallback	24	static,ignoring_inline_asm
-../Core/Src/test_uart.c:139:6:HAL_UART_RxCpltCallback	24	static,ignoring_inline_asm
+../Core/Src/test_uart.c:19:6:init_uart_task	16	static
+../Core/Src/test_uart.c:53:6:xUart_task	48	static
+../Core/Src/test_uart.c:166:6:HAL_UART_TxCpltCallback	24	static,ignoring_inline_asm
+../Core/Src/test_uart.c:184:6:HAL_UART_RxCpltCallback	24	static,ignoring_inline_asm

@@ -130,8 +130,7 @@ void UDP_Server_Task(void)
 
             printf("Before Dispatch\r\n");
             fflush(stdout);
-
-          Dispatch_Peripheral_Command(&cmd);
+            Dispatch_Peripheral_Command(&cmd);
 
             printf("After Dispatch\r\n");
             fflush(stdout);
@@ -148,9 +147,8 @@ void UDP_Send_Ack(cmd_to_stm_t *cmd)
 {
     ack_to_client_t ack;
 
-    /* Convert back to network order before sending */
-        ack.test_id = htons(cmd->test_id);
-  //  ack.test_id = cmd->test_id;
+    ack.packet_type = PACKET_TYPE_ACK;
+    ack.test_id = htons(cmd->test_id);
     ack.status = 1;
     ack.peripheral = cmd->tested_Peripheral;
 
@@ -161,22 +159,17 @@ void UDP_Send_Ack(cmd_to_stm_t *cmd)
     if (p == NULL)
     {
         printf("pbuf_alloc failed\r\n");
-        return ;
+        return;
     }
 
     memcpy(p->payload, &ack, sizeof(ack));
 
-    if (xSemaphoreTake(udp_tx_mutex,
-                       pdMS_TO_TICKS(100)) == pdTRUE)
+    if (xSemaphoreTake(udp_tx_mutex, pdMS_TO_TICKS(100)) == pdTRUE)
     {
-        printf("ACK to %s:%u\r\n",
-               ipaddr_ntoa(&last_client_ip),
-               last_client_port);
-
-        printf("ACK id=%u to %s:%u\r\n",
+        printf("ACK id=%u type=%u size=%u\r\n",
                cmd->test_id,
-               ipaddr_ntoa(&last_client_ip),
-               last_client_port);
+               ack.packet_type,
+               (unsigned int)sizeof(ack));
 
         err_t err = udp_sendto(udp_pcb_handle,
                                p,
@@ -206,24 +199,24 @@ void Dispatch_Peripheral_Command(cmd_to_stm_t *cmd) {
 	switch (cmd->tested_Peripheral) {
 
 	case PERIPH_TIMER:
-		xQueueSend(xQueue_tmr, cmd, 0);
+		xQueueSend(xQueue_tmr, cmd, 100);
 		break;
 
 	case PERIPH_UART:
 		   if (xQueue_uart != NULL)
-		      ok = xQueueSend(xQueue_uart, cmd, 0);
+		      ok = xQueueSend(xQueue_uart, cmd, 100);
 		break;
 
 	case PERIPH_SPI:
-//		xQueueSend(xQueue_spi, cmd, 0);
+//		xQueueSend(xQueue_spi, cmd, 100);
 		break;
 
 	case PERIPH_I2C:
-		xQueueSend(xQueue_i2c, cmd, 0);
+		xQueueSend(xQueue_i2c, cmd, 100);
 		break;
 
 	case PERIPH_ADC:
-		xQueueSend(xQueue_adc, cmd, 0);
+		xQueueSend(xQueue_adc, cmd, 100);
 		break;
 
 	default:

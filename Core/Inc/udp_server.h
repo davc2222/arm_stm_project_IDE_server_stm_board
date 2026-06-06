@@ -10,6 +10,8 @@
 #define UDP_LISTEN_PORT 1234
 //#define UDP_RX_BUFFER_SIZE 64
 
+#define PACKET_TYPE_ACK     1
+#define PACKET_TYPE_RESULT  2
 
 typedef struct __attribute__((packed))
 {
@@ -22,11 +24,11 @@ typedef struct __attribute__((packed))
 } cmd_to_stm_t;
 
 
-
 typedef struct __attribute__((packed))
 {
+    uint8_t packet_type;
     uint16_t test_id;
-    uint8_t status;      // 1 = received
+    uint8_t status;
     uint8_t peripheral;
 } ack_to_client_t;
 

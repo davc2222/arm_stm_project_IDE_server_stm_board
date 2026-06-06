@@ -1,4 +1,4 @@
-../Core/Src/test_uart.c:19:7:init_uart_task	3
-../Core/Src/test_uart.c:44:6:xUart_task	9
-../Core/Src/test_uart.c:124:6:HAL_UART_TxCpltCallback	3
-../Core/Src/test_uart.c:139:6:HAL_UART_RxCpltCallback	3
+../Core/Src/test_uart.c:19:6:init_uart_task	5
+../Core/Src/test_uart.c:53:6:xUart_task	14
+../Core/Src/test_uart.c:166:6:HAL_UART_TxCpltCallback	4
+../Core/Src/test_uart.c:184:6:HAL_UART_RxCpltCallback	4

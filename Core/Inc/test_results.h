@@ -25,14 +25,10 @@ extern UART_HandleTypeDef huart5;
 
 typedef struct __attribute__((packed))
 {
+    uint8_t packet_type;
     uint16_t test_id;
-    uint8_t  peripheral;
-    uint8_t  status;
-    /*
-        0 = FAIL
-        1 = PASS
-    */
-
+    uint8_t peripheral;
+    uint8_t status;
 } test_result_t;
 
 #define   RSLT_QUEUE_SIZE      sizeof(test_result_t)

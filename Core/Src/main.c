@@ -810,8 +810,7 @@ void StartDefaultTask(void *argument)
 
 
 	         UDP_Server_Task();
-
-  osDelay(100);
+ osDelay(1);
   }
   /* USER CODE END 5 */
 }
